@@ -1,0 +1,88 @@
+The construction that has been done on the original version of
+java minibase software:
+
+1. All package names have been changed to java style, i.e. all
+   are in lower case letters:
+
+   Updated package names (so is the corresponding declarating 
+   within each *.java program.)
+
+    new                old
+   ------             ------           
+   bufmgr             BUFmgr
+   diskmgr            DBmgr
+   heap               HeapFile
+   global             Global
+   btree              btree
+   iterator           iterator
+   index              index
+   catalog            catalog
+   tests              tests
+
+2. The attempt to eliminate the original exception handling
+   stack aborted due to the following reasons:
+
+   - The java exception handling stack does not provide enough
+     control over layered exception throwing.
+   - The original design made it the code conversion hard to
+     accomplish.  It would have resulted in a big mess.
+
+   Therefore the following modifications:
+
+3. One more package, chainexception, was added.  The original
+   ChainException.java program did not belong to any exsiting
+   package.  Putting a wrapper package around the program has
+   made the software more modulized.
+
+4. Exception names in all packages (with exception of the catalog
+   package) were updated to follow the java naming style.  One of
+   the motivation in doing so was that many of the exceptions in
+   the original code were named *something*Error.  Since Error
+   class exists in java language and refers specifically to another
+   type of error, it was therefore necessary to alter the names of
+   the exception to make them less misleading.  It also made our
+   code more professional looking.
+
+5. The ChainException.java has been modified to enable the printStack()
+   method to print out the entire exception stack from the bottom
+   layer. The following should be followed when throw minibase exceptions:
+
+   //to throw a minibase first error:
+     throw new SomeException(null, "Error Message");
+
+   //to throw a  minibase chain error ex2 based on first error ex1:
+   catch(exception LowerLayerException) {
+     throw new SomeException(LowerLayerException, "Error Message");
+   }
+
+   //to display the whole error chain:
+   catch(exception e) {
+     // this will recursively print out all trace stack.
+     e.printStackTrace();
+   }
+
+   Note that the original implementation did not strictly follow the 
+   above protocol.  The code has been modified to my best ability. 
+
+6. Due to the changes in all packages, the test files all needed to
+   be modified accordingly as well.  Now all the packages have passed
+   the test files implemented.
+
+7. Assignments are prepared for Buffer Manager, Heap Files, B+ Tree,
+   and Sorted Merge Join.  Note that the Sorted Merge Join assignment
+   can also be easily modified (extended) to other Join assignments,
+   i.e. Nested Loop Join for example.  Read the README file in each
+   package (if exsited) for details of assignments.  The princeple here
+   is to fully utilize the javadoc documentation for the descriptions
+   of classes provided or to be implemented.  All the handouts are
+   modified accordingly.
+
+8. The package index for the complete version of all packages for
+   java minibase is under ./javadoc.
+   The documetation is created by:
+
+   javadoc -d javadoc -public bufmgr diskmgr heap btree index catalog \
+                              iterator global chainexception
+
+Qingqing Ouyang
+12/14/1998
